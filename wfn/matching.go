@@ -16,7 +16,6 @@ package wfn
 
 import (
 	"fmt"
-	"strings"
 )
 
 // Possible values of Relation type
@@ -234,10 +233,10 @@ func Compare(src, tgt *Attributes) (Comparison, error) {
 	if result.Part, err = CompareAttr(src.Part, tgt.Part); err != nil {
 		return result, fmt.Errorf("failed to compare wfns %q to %q: %v", src.Part, tgt.Part, err)
 	}
-	if result.Vendor, err = CompareAttrCustom(src.Vendor, tgt.Vendor); err != nil {
+	if result.Vendor, err = CompareAttr(src.Vendor, tgt.Vendor); err != nil {
 		return result, fmt.Errorf("failed to compare wfns %q to %q: %v", src.Vendor, tgt.Vendor, err)
 	}
-	if result.Product, err = CompareAttrCustom(src.Product, tgt.Product); err != nil {
+	if result.Product, err = CompareAttr(src.Product, tgt.Product); err != nil {
 		return result, fmt.Errorf("failed to compare wfns %q to %q: %v", src.Product, tgt.Product, err)
 	}
 	if result.Version, err = CompareAttr(src.Version, tgt.Version); err != nil {
@@ -274,8 +273,8 @@ func Match(src, tgt *Attributes) bool {
 	if src == nil || tgt == nil {
 		return false
 	}
-	return matchAttr(src.Part, tgt.Part) && matchAttrCustom(src.Vendor, tgt.Vendor) &&
-		matchAttrCustom(src.Product, tgt.Product) && matchAttr(src.Version, tgt.Version) &&
+	return matchAttr(src.Part, tgt.Part) && matchAttr(src.Vendor, tgt.Vendor) &&
+		matchAttr(src.Product, tgt.Product) && matchAttr(src.Version, tgt.Version) &&
 		matchAttr(src.Update, tgt.Update) && matchAttr(src.Edition, tgt.Edition) &&
 		matchAttr(src.Language, tgt.Language) && matchAttr(src.SWEdition, tgt.SWEdition) &&
 		matchAttr(src.TargetHW, tgt.TargetHW) && matchAttr(src.TargetSW, tgt.TargetSW) &&
@@ -332,13 +331,6 @@ func CompareAttr(src, tgt string) (Relation, error) {
 	return matchStr(src, tgt), nil
 }
 
-func CompareAttrCustom(src, tgt string) (Relation, error) {
-   if strings.Contains(tgt, src) {
-       return Subset, nil
-   }
-   return CompareAttr(src, tgt)
-}
-
 // matchAttr returns true if relation between src and tgt is one of Equal, Subset or Superset.
 // It returns false on undefined relations, except when src == tgt byte-by-byte.
 // This is crude but fast(-er) version of CompareAttr.
@@ -351,13 +343,6 @@ func matchAttr(src, tgt string) bool {
 	default:
 		return matchStr(src, tgt) != Disjoint
 	}
-}
-
-func matchAttrCustom(src, tgt string) bool {
-   if strings.Contains(tgt, src) {
-       return true
-   }
-   return matchAttr(src, tgt)
 }
 
 func matchStr(s, t string) Relation {
