@@ -274,12 +274,12 @@ func Match(src, tgt *Attributes) bool {
 	if src == nil || tgt == nil {
 		return false
 	}
-	return matchAttr(src.Part, tgt.Part) && matchAttr(src.Vendor, tgt.Vendor) &&
-		matchAttr(src.Product, tgt.Product) && matchAttr(src.Version, tgt.Version) &&
-		matchAttr(src.Update, tgt.Update) && matchAttr(src.Edition, tgt.Edition) &&
-		matchAttr(src.Language, tgt.Language) && matchAttr(src.SWEdition, tgt.SWEdition) &&
-		matchAttr(src.TargetHW, tgt.TargetHW) && matchAttr(src.TargetSW, tgt.TargetSW) &&
-		matchAttr(src.Other, tgt.Other)
+	return matchAttr(src.Part, tgt.Part,false) && matchAttr(src.Vendor, tgt.Vendor,false) &&
+		matchAttr(src.Product, tgt.Product,false) && matchAttr(src.Version, tgt.Version, true) &&
+		matchAttr(src.Update, tgt.Update,false) && matchAttr(src.Edition, tgt.Edition,false) &&
+		matchAttr(src.Language, tgt.Language,false) && matchAttr(src.SWEdition, tgt.SWEdition,false) &&
+		matchAttr(src.TargetHW, tgt.TargetHW,false) && matchAttr(src.TargetSW, tgt.TargetSW,false) &&
+		matchAttr(src.Other, tgt.Other,false)
 }
 
 // CompareAttr calculates a relation between a pair of wfn attribute values.
@@ -329,18 +329,15 @@ func CompareAttr(src, tgt string) (Relation, error) {
 	if src == NA || tgt == NA {
 		return Disjoint, nil
 	}
-	if strings.Contains(src, tgt) {
-		return Equal, nil
-	}
 	return matchStr(src, tgt), nil
 }
 
 // matchAttr returns true if relation between src and tgt is one of Equal, Subset or Superset.
 // It returns false on undefined relations, except when src == tgt byte-by-byte.
 // This is crude but fast(-er) version of CompareAttr.
-func matchAttr(src, tgt string) bool {
+func matchAttr(src, tgt string, version bool) bool {
 	switch {
-	case src == Any || tgt == Any || src == tgt || strings.Contains(tgt, src):
+	case src == Any || tgt == Any || src == tgt || (!version && strings.Contains(tgt, src)):
 		return true
 	case src == NA || tgt == NA || HasWildcard(tgt):
 		return false

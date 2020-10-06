@@ -33,7 +33,7 @@ func (a *Attributes) MatchOnlyVersion(attr *Attributes) bool {
 	if a == nil || attr == nil {
 		return a == attr // both are nil
 	}
-	return matchAttr(a.Version, attr.Version)
+	return matchAttr(a.Version, attr.Version, true)
 }
 
 // MatchWithoutVersion checks whether everything else besides the version matches
@@ -41,12 +41,12 @@ func (a *Attributes) MatchWithoutVersion(attr *Attributes) bool {
 	if a == nil || attr == nil {
 		return a == attr // both are nil
 	}
-	return matchAttr(a.Product, attr.Product) &&
-		matchAttr(a.Vendor, attr.Vendor) && matchAttr(a.Part, attr.Part) &&
-		matchAttr(a.Update, attr.Update) && matchAttr(a.Edition, attr.Edition) &&
-		matchAttr(a.Language, attr.Language) && matchAttr(a.SWEdition, attr.SWEdition) &&
-		matchAttr(a.TargetHW, attr.TargetHW) && matchAttr(a.TargetSW, attr.TargetSW) &&
-		matchAttr(a.Other, attr.Other)
+	return matchAttr(a.Product, attr.Product, false) &&
+		matchAttr(a.Vendor, attr.Vendor, false) && matchAttr(a.Part, attr.Part, false) &&
+		matchAttr(a.Update, attr.Update, false) && matchAttr(a.Edition, attr.Edition, false) &&
+		matchAttr(a.Language, attr.Language, false) && matchAttr(a.SWEdition, attr.SWEdition, false) &&
+		matchAttr(a.TargetHW, attr.TargetHW, false) && matchAttr(a.TargetSW, attr.TargetSW, false) &&
+		matchAttr(a.Other, attr.Other, false)
 }
 
 // MatchAll returns a Matcher which matches only if all matchers match
