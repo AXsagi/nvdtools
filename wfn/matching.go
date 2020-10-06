@@ -16,7 +16,6 @@ package wfn
 
 import (
 	"fmt"
-	"strings"
 )
 
 // Possible values of Relation type
@@ -329,9 +328,6 @@ func CompareAttr(src, tgt string) (Relation, error) {
 	if src == NA || tgt == NA {
 		return Disjoint, nil
 	}
-	if strings.Contains(src, tgt) {
-		return Equal, nil
-	}
 	return matchStr(src, tgt), nil
 }
 
@@ -340,7 +336,7 @@ func CompareAttr(src, tgt string) (Relation, error) {
 // This is crude but fast(-er) version of CompareAttr.
 func matchAttr(src, tgt string) bool {
 	switch {
-	case src == Any || tgt == Any || src == tgt || strings.Contains(tgt, src):
+	case src == Any || tgt == Any || src == tgt:
 		return true
 	case src == NA || tgt == NA || HasWildcard(tgt):
 		return false
